@@ -4,6 +4,7 @@ import app.util.CustomException;
 
 import java.util.List;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static app.util.Errors.*;
 import static app.util.MyConstans.*;
@@ -18,7 +19,11 @@ public class InputDataHandler {
 
         if(!inputData.isEmpty()) {
 
+            AtomicInteger lineCounter = new AtomicInteger(0);
+
             inputData.forEach(input -> {
+
+                lineCounter.incrementAndGet();
 
                 try {
                     String[] splitDataLine = input.split(",");
@@ -35,7 +40,7 @@ public class InputDataHandler {
                     else if (splitDataLine.length == QUERIE_FOR_BEST_SIZE && splitDataLine[0].equals(QUERIE))
                         querie(splitDataLine[1], null);
 
-                    else throw new CustomException(INPUT_DATA_ERROR);
+                    else throw new CustomException(INPUT_DATA_ERROR + " at file line " + lineCounter);
                 } catch (CustomException e) {
                     System.err.println(e.getMessage());
                 }

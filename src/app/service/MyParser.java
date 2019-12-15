@@ -20,19 +20,17 @@ public class MyParser {
         this.inputDataHandler = inputDataHandler;
     }
 
-    public void read() throws CustomException {
+    public void startRead() {
 
         List<String> inputData = new ArrayList();
 
         JFileChooser chooser = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                "TXT files", "txt");
-        chooser.setFileFilter(filter);
 
         if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+
             String fileName = chooser.getSelectedFile().getName();
-            String pathToSave = chooser.getSelectedFile().getAbsolutePath();
-            pathToSave = pathToSave.substring(0, pathToSave.lastIndexOf(fileName)) + "output";
+            String pathWithFileName = chooser.getSelectedFile().getAbsolutePath();
+            String pathToSave = pathWithFileName.substring(0, pathWithFileName.lastIndexOf(fileName)) + "output";
 
             try (FileReader reader = new FileReader(chooser.getSelectedFile())) {
                 StringBuilder result = new StringBuilder();
@@ -41,10 +39,15 @@ public class MyParser {
                     result.append((char) c);
                 }
                 inputData = Arrays.asList(result.toString().split("\r\n"));
-            } catch (IOException ex) {
-                System.err.println(ex.getMessage());
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
             }
-            saveToFile(inputDataHandler.processing(inputData), pathToSave);
+
+            try {
+                saveToFile(inputDataHandler.processing(inputData), pathToSave);
+            } catch (CustomException e) {
+                System.err.println(e.getMessage());
+            }
         }
     }
 
@@ -56,7 +59,7 @@ public class MyParser {
             System.out.println("Done! Output file was saved by this path: " + pathToSave);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
     }
 }
